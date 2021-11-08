@@ -128,12 +128,13 @@ function AuthContextProvider(props) {
                 authReducer({
                     type: AuthActionType.LOGIN_USER,
                     payload: {
-
+                        user: response.data.user
                     }
                 })
                 history.push("/");
             }
         } catch (e){
+            console.log(e);
             authReducer({
                 type: AuthActionType.UPDATE_ERROR_STATUS,
                 payload: {
