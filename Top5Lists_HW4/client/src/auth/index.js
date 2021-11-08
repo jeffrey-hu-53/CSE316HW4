@@ -54,6 +54,14 @@ function AuthContextProvider(props) {
                     errorMessage: null
                 })
             }
+            case AuthActionType.LOGOUT_USER: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    errorStatus: false,
+                    errorMessage: null
+                })
+            }
             case AuthActionType.UPDATE_ERROR_STATUS: {
                 return setAuth({
                     user: null,
@@ -88,7 +96,7 @@ function AuthContextProvider(props) {
             //         errorStatus: true
             //     }
             // })
-            console.log(e.response.data.errorMessage);
+            // console.log(e.response.data.errorMessage);
         }
         
     }
@@ -153,6 +161,28 @@ function AuthContextProvider(props) {
                 errorStatus: false
             }
         })
+    }
+
+    auth.logoutUser = async () => {
+        try{
+            console.log("sending logout request")
+            const response = await api.logoutUser();
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.LOGOUT_USER
+                })
+                history.push("/");
+            }
+        } catch (e){
+            console.log(e);
+            // authReducer({
+            //     type: AuthActionType.UPDATE_ERROR_STATUS,
+            //     payload: {
+            //         errorMessage: e.response.data.errorMessage,
+            //         errorStatus: true
+            //     }
+            // })
+        } 
     }
 
     return (

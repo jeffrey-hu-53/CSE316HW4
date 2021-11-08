@@ -115,8 +115,14 @@ loginUser = async (req, res) => {
         }
 }
 
+logoutUser = async (req, res) => {
+    console.log("logout user");
+    await res.clearCookie('token').status(200).send();
+}
+
 module.exports = {
     getLoggedIn,
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
 }
