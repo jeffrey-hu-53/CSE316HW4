@@ -78,7 +78,45 @@ registerUser = async (req, res) => {
     }
 }
 
+loginUser = async (req, res) => {
+    console.log("login user")
+    const existingUser = await User.findOne( {email: req.body.email} );
+        if (existingUser) {
+            if (bcrypt.compareSync(req.body.password, existingUser.passwordHash)){
+                const token = auth.signToken(existingUser);
+
+                await res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "none"
+                }).status(200).json({
+                    success: true,
+                    user: {
+                        firstName: existingUser.firstName,
+                        lastName: existingUser.lastName,
+                        email: existingUser.email
+                    }
+                }).send();
+
+                
+            } else {
+                return res
+                    .status(400)
+                    .json({
+                        errorMessage: "Email or Password is incorrect."
+                    })
+            }
+        } else {
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Email or Password is incorrect."
+                })
+        }
+}
+
 module.exports = {
     getLoggedIn,
-    registerUser
+    registerUser,
+    loginUser
 }

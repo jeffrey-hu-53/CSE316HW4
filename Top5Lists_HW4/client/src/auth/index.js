@@ -8,14 +8,19 @@ console.log("create AuthContext: " + AuthContext);
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
 export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    UPDATE_ERROR_STATUS: "UPDATE_ERROR_STATUS",
+    LOGIN_USER: "LOGIN_USER"
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false
+        loggedIn: false,
+        errorStatus: false,
+        errorMessage: null
     });
+
     const history = useHistory();
 
     useEffect(() => {
@@ -28,13 +33,33 @@ function AuthContextProvider(props) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: payload.loggedIn
+                    loggedIn: payload.loggedIn,
+                    errorStatus: false,
+                    errorMessage: null
                 });
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    errorStatus: false,
+                    errorMessage: null
+                })
+            }
+            case AuthActionType.LOGIN_USER: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: true,
+                    errorStatus: false,
+                    errorMessage: null
+                })
+            }
+            case AuthActionType.UPDATE_ERROR_STATUS: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    errorStatus: payload.errorStatus,
+                    errorMessage: payload.errorMessage
                 })
             }
             default:
@@ -43,30 +68,90 @@ function AuthContextProvider(props) {
     }
 
     auth.getLoggedIn = async function () {
-        const response = await api.getLoggedIn();
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.SET_LOGGED_IN,
-                payload: {
-                    loggedIn: response.data.loggedIn,
-                    user: response.data.user
-                }
-            });
+        try {
+            const response = await api.getLoggedIn();
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.SET_LOGGED_IN,
+                    payload: {
+                        loggedIn: response.data.loggedIn,
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+            }
+        } catch (e){
+            // authReducer({
+            //     type: AuthActionType.UPDATE_ERROR_STATUS,
+            //     payload: {
+            //         errorMessage: e.response.data.errorMessage,
+            //         errorStatus: true
+            //     }
+            // })
+            console.log(e.response.data.errorMessage);
         }
+        
     }
 
     auth.registerUser = async function(userData, store) {
-        const response = await api.registerUser(userData);      
-        if (response.status === 200) {
+        try{
+            const response = await api.registerUser(userData);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+                store.loadIdNamePairs();
+            }
+        } catch (e){
+            console.log(e)
             authReducer({
-                type: AuthActionType.REGISTER_USER,
+                type: AuthActionType.UPDATE_ERROR_STATUS,
                 payload: {
-                    user: response.data.user
+                    errorMessage: e.response.data.errorMessage,
+                    errorStatus: true
                 }
             })
-            history.push("/");
-            store.loadIdNamePairs();
-        }
+            console.log(e.response.data.errorMessage);
+        } 
+        
+    }
+
+    auth.loginUser = async function(userData){
+        try{
+            console.log("sending login request")
+            const response = await api.loginUser(userData);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.LOGIN_USER,
+                    payload: {
+
+                    }
+                })
+                history.push("/");
+            }
+        } catch (e){
+            authReducer({
+                type: AuthActionType.UPDATE_ERROR_STATUS,
+                payload: {
+                    errorMessage: e.response.data.errorMessage,
+                    errorStatus: true
+                }
+            })
+        } 
+    }
+
+    auth.turnOffErrorStatus = () => {
+        authReducer({
+            type: AuthActionType.UPDATE_ERROR_STATUS,
+            payload: {
+                errorMessage: null,
+                errorStatus: false
+            }
+        })
     }
 
     return (
