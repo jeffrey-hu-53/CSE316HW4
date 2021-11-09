@@ -160,7 +160,8 @@ function AuthContextProvider(props) {
                 errorMessage: null,
                 errorStatus: false
             }
-        })
+        }, console.log(auth.errorStatus))
+        
     }
 
     auth.logoutUser = async () => {

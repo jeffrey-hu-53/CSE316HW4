@@ -42,7 +42,7 @@ function GlobalStoreContextProvider(props) {
         newListCounter: 0,
         listNameActive: false,
         itemActive: false,
-        listMarkedForDeletion: null
+        listMarkedForDeletion: null,
     });
     const history = useHistory();
 
@@ -228,11 +228,16 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    function checkOwnership(list){
+        return list.ownerEmail == auth.user.email;
+    }
+
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
         const response = await api.getTop5ListPairs();
         if (response.data.success) {
-            let pairsArray = response.data.idNamePairs;
+            console.log(response.data.idNamePairs);
+            let pairsArray = response.data.idNamePairs.filter((l) => checkOwnership(l));
             storeReducer({
                 type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                 payload: pairsArray
@@ -256,7 +261,19 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
                 payload: top5List
             });
+            displayDeleteModal();
         }
+    }
+
+    function displayDeleteModal(){
+        let modal = document.getElementById("delete-modal");
+        modal.classList.add("is-visible");
+    }
+
+    store.hideDeleteListModal = () =>{
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
+        store.unmarkListForDeletion();
     }
 
     store.deleteList = async function (listToDelete) {
@@ -264,6 +281,7 @@ function GlobalStoreContextProvider(props) {
         if (response.data.success) {
             store.loadIdNamePairs();
             history.push("/");
+            store.hideDeleteListModal();
         }
     }
 
@@ -364,10 +382,12 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
+        
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null
         });
+        store.loadIdNamePairs();
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING AN ITEM

@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { GlobalStoreContext } from '../store'
 import Alert from '@mui/material/Alert';
+import AlertModal from './AlertModal';
 
 export default function RegisterScreen() {
     const { auth } = useContext(AuthContext);
@@ -47,7 +48,9 @@ export default function RegisterScreen() {
                     <Typography component="h1" variant="h5">
                         Sign up
                     </Typography>
-                    <Alert severity="error" style={{display: (auth.errorStatus ? '' : 'none')}}>{auth.errorMessage}</Alert>
+                    {/* <Alert onClose={() => {}} severity="error" style={{display: (auth.errorStatus ? '' : 'none')} }>{auth.errorMessage}</Alert> */}
+                    {/* <Alert onClose={() => {}} severity="error">{auth.errorMessage}</Alert> */}
+                    <AlertModal > </AlertModal>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>

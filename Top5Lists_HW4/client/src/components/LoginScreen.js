@@ -16,6 +16,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
+import AlertModal from './AlertModal';
 
 function Copyright(props) {
   return (
@@ -80,7 +81,8 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Log in
             </Typography>
-            <Alert severity="error" style={{display: (auth.errorStatus ? '' : 'none')}}>{auth.errorMessage}</Alert>
+            {/* <Alert severity="error" style={{display: (auth.errorStatus ? '' : 'none')}}>{auth.errorMessage}</Alert> */}
+            <AlertModal > </AlertModal>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"

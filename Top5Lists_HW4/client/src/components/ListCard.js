@@ -93,6 +93,7 @@ function ListCard(props) {
                 required
                 fullWidth
                 id={"list-" + idNamePair._id}
+                ownerEmail={idNamePair.ownerEmail}
                 label="Top 5 List Name"
                 name="name"
                 autoComplete="Top 5 List Name"
