@@ -12,6 +12,10 @@ export default function TransitionAlerts() {
   const [open, setOpen] = React.useState(true);
   const { auth } = useContext(AuthContext);
   
+  function handleCloseModal(){
+    auth.turnOffErrorStatus();
+  }
+  // setOpen(true);
   if (auth.errorStatus){
     return (
         <Box sx={{ width: '100%' }}>
@@ -23,7 +27,7 @@ export default function TransitionAlerts() {
                   color="inherit"
                   size="small"
                   onClick={() => {
-                    setOpen(false);
+                    // setOpen(false);
                     // authReducer({
                     //     type: AuthActionType.UPDATE_ERROR_STATUS,
                     //     payload: {
@@ -32,6 +36,7 @@ export default function TransitionAlerts() {
                     //     }
                     // })
                     // auth.turnOffErrorStatus()
+                    handleCloseModal();
                   }}
                 >
                   <CloseIcon fontSize="inherit" />

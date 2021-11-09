@@ -207,7 +207,7 @@ function GlobalStoreContextProvider(props) {
                     async function getListPairs(top5List) {
                         response = await api.getTop5ListPairs();
                         if (response.data.success) {
-                            let pairsArray = response.data.idNamePairs;
+                            let pairsArray = response.data.idNamePairs.filter((l) => checkOwnership(l));
                             storeReducer({
                                 type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                 payload: {
@@ -304,8 +304,8 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.hideDeleteListModal = () =>{
-        let modal = document.getElementById("delete-modal");
-        modal.classList.remove("is-visible");
+        // let modal = document.getElementById("delete-modal");
+        // modal.classList.remove("is-visible");
         store.unmarkListForDeletion();
     }
 

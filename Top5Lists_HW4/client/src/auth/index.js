@@ -10,7 +10,8 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     REGISTER_USER: "REGISTER_USER",
     UPDATE_ERROR_STATUS: "UPDATE_ERROR_STATUS",
-    LOGIN_USER: "LOGIN_USER"
+    LOGIN_USER: "LOGIN_USER",
+    UPDATE_ERROR_STATUS: "UPDATE_ERROR_STATUS"
 }
 
 function AuthContextProvider(props) {
@@ -157,12 +158,14 @@ function AuthContextProvider(props) {
         authReducer({
             type: AuthActionType.UPDATE_ERROR_STATUS,
             payload: {
-                errorMessage: null,
-                errorStatus: false
+                errorStatus: false,
+                errorMessage: null
             }
-        }, console.log(auth.errorStatus))
-        
+        })
+        console.log(auth.errorStatus) 
     }
+
+    
 
     auth.logoutUser = async () => {
         try{
